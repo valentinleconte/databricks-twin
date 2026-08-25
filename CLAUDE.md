@@ -74,12 +74,30 @@ MIT). Lue en entier, points clés :
   utilisable indéfiniment, sans lien avec un compte actif). À mentionner honnêtement dans le
   README, comme on l'a fait pour la licence Apache 2.0 d'OpenRAG.
 
+## Accès workspace — vérifié en direct (CLI, pas supposé)
+
+Authentifié via `databricks auth login` (OAuth navigateur, profil `databricks-twin` dans
+`~/.databrickscfg`). Host : `dbc-1c1fb98c-23cd.cloud.databricks.com`.
+
+- ✅ **Model Serving** : pleinement dispo, sans rien configurer. Endpoints Foundation Model déjà
+  `READY` : chat (Llama 3.3 70B, Llama 4 Maverick, GPT OSS 120B/20B, Qwen3-Next-80B, Qwen3.5-122B,
+  Gemma 3 12B, Llama 3.1 8B) + embeddings (GTE Large, BGE Large, Qwen3 Embedding 0.6B). Pas de
+  Claude dans ce roster pay-per-token par défaut — à garder en tête pour le choix du LLM.
+- ✅ **Vector Search** : confirmé en créant un vrai endpoint de test (`databricks-twin-test`,
+  type STANDARD) — passé `ONLINE` immédiatement (serverless), puis supprimé après vérification.
+- ✅ **Unity Catalog** : confirmé (`databricks catalogs list` → `workspace`, `system`, `samples`).
+
+**Conclusion : la Free Edition suffit largement, pas besoin de l'essai 14 jours.** Les trois
+briques nécessaires pour répliquer l'équivalent Databricks d'OpenRAG sont opérationnelles, à coût
+zéro (pas de carte bancaire ajoutée).
+
 ## Prochaines étapes
 
-1. [ ] Attendre confirmation accès workspace (Free Edition) de l'utilisateur
-2. [ ] Vérifier concrètement : Vector Search fonctionnel ? Model Serving/Foundation APIs
-   disponibles en Free Edition ? Si non → basculer sur l'essai 14 jours
+1. [x] ~~Attendre confirmation accès workspace~~ — fait, vérifié en CLI
+2. [x] ~~Vérifier Vector Search / Model Serving~~ — les deux confirmés fonctionnels
 3. [ ] Cloner `agent-langgraph` comme base réelle du projet (remplacer ce clone de review)
-4. [ ] Définir le scénario fonctionnel (routage) — à faire choisir par l'utilisateur, pas moi,
+4. [ ] Choisir le LLM (pas de Claude en pay-per-token natif — voir si accessible autrement, ou
+   choisir parmi le roster Llama/Qwen/GPT-OSS disponible)
+5. [ ] Définir le scénario fonctionnel (routage) — à faire choisir par l'utilisateur, pas moi,
    même principe que pour OpenRAG
-5. [ ] README avec la licence Databricks correctement citée + NOTICE inclus
+6. [ ] README avec la licence Databricks correctement citée + NOTICE inclus
