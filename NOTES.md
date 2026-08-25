@@ -172,12 +172,34 @@ Search). Vérifié par `SELECT COUNT(*)` → 196, correspond au compte du chunke
   à vérifier `status.ready == true` avant de tester l'agent en local.
 
 **Genie Space** — **création UI-only, ne peut pas être automatisée en CLI** (confirmé : pas de
-`databricks genie create-space`). Instructions données à l'utilisateur (voir message de session) :
-créer un space sur `workspace.databricks_twin.support_tickets`, warehouse par défaut = "Serverless
-Starter Warehouse" (`1f75e75518a91b9a`), le partager en `CAN_RUN` avec le service principal de
-l'app (`databricks apps get agent-databricks-twin --output json --profile databricks-twin | jq -r
-'.service_principal_name'`), puis me redonner le `space_id` (visible dans l'URL `.../genie/rooms/<id>`
-ou via `databricks genie list-spaces`).
+`databricks genie create-space`). Créé par l'utilisateur : "Support Ticket Management"
+(`space_id=01f1a032e846136bb82ee33eb3e6a582`), warehouse "Serverless Starter Warehouse". Partage
+avec le service principal de l'app **reporté après le déploiement** — l'app n'existe pas encore
+(`databricks apps get agent-databricks-twin` → 404 tant que `bundle deploy` n'a pas tourné), donc
+pas de service principal à partager pour l'instant ; en local on requête avec sa propre identité.
+
+## Scénario vérifié bout en bout (local, `uv run start-app`, `:8000`/`:3100`)
+
+Les 4 cas de routage testés en direct sur `/invocations` :
+1. **Question doc seule** ("How does Vector Search sync with its source Delta table?") → tool
+   `doc-search` appelé, réponse correcte, `source_url` cité exactement.
+2. **Question ticket seule** ("status of ticket 104?") → tool Genie appelé, SQL généré par Genie
+   correct (`SELECT status, assignee FROM ... WHERE ticket_id = '104'`), réponse exacte
+   ("Open" / "Alice Martin").
+3. **Question mixte** ("how many tickets Open, and what is Unity Catalog for?") → **les deux tools
+   appelés dans la même requête**, compte exact (3 — tickets 101/104/105), réponse doc correcte
+   avec 3 citations distinctes.
+4. **Ticket inexistant** ("status of ticket 999?") → Genie répond "not found" côté SQL (aucune ligne),
+   agent le restitue sans halluciner un statut.
+
+**Bug trouvé et corrigé en cours de route** : au premier test du cas 1, la citation finale
+contenait `.html` en suffixe du `source_url` (`.../vector-search.html`) — halluciné par le modèle,
+alors que le `source_url` réellement retourné par le tool n'a pas ce suffixe. Cause : la consigne de
+citation ("cite the source_url") n'imposait pas explicitement une copie verbatim. Fix : instruction
+renforcée dans `AGENT_INSTRUCTIONS` ("copy it verbatim from the tool result, character for
+character; never append, guess, or 'complete' a URL"). Retesté après fix → citation exacte, sans
+suffixe inventé. Même famille de vigilance que les bugs OpenRAG : ne jamais supposer qu'un modèle
+restitue un identifiant technique fidèlement sans le lui dire explicitement.
 
 **Agent (`agent_server/agent.py`)** — réécrit pour utiliser les deux MCP servers Databricks-hébergés
 au lieu de l'outil d'exemple `get_current_time` (supprimé) :
