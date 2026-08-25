@@ -55,7 +55,11 @@ async def init_agent(workspace_client: Optional[WorkspaceClient] = None):
     #       tools.extend(await mcp_client.get_tools())
     #   except Exception:
     #       logger.warning("Failed to fetch MCP tools. Continuing without MCP tools.", exc_info=True)
-    return create_agent(tools=tools, model=ChatDatabricks(endpoint="databricks-gpt-5-2"))
+    # databricks-gpt-5-2 (the template's default) doesn't exist on this workspace's pay-per-token
+    # roster — verified via `databricks serving-endpoints list`. No Anthropic Claude available
+    # either. Using Llama 3.3 70B Instruct: a capable, well-established choice for agentic
+    # tool-calling among what's actually READY here.
+    return create_agent(tools=tools, model=ChatDatabricks(endpoint="databricks-meta-llama-3-3-70b-instruct"))
 
 
 @invoke()

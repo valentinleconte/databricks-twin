@@ -226,3 +226,6 @@ sketch
 **/.env
 **/.env.local
 load-test-runs/
+
+# Auto-cloned by scripts/start_app.py — regenerated on demand, never commit
+/e2e-chatbot-app-next/

@@ -112,6 +112,29 @@ esprit openrag-twin), j'ai écrasé sans le lire d'abord le `README.md` original
 avant que ce soit commité, sauvegardé dans `docs/AGENT_TEMPLATE_README.md`. Rien perdu, mais
 ça aurait dû être lu/renommé *avant* d'écrire dessus, pas après coup — leçon pour la suite.
 
+## Premier bug rencontré & corrigé — même famille que les bugs OpenRAG
+
+**Symptôme** : `uv run start-app` + première question dans le chat → `404 ENDPOINT_NOT_FOUND`
+("The given endpoint does not exist").
+
+**Cause racine** : `agent_server/agent.py` référence en dur `ChatDatabricks(endpoint="databricks-gpt-5-2")`
+— un endpoint qui n'existe simplement pas dans le roster réellement disponible sur ce workspace
+(vérifié via `databricks serving-endpoints list` : Llama 3.x/4, GPT OSS, Qwen3, Gemma 3, pas de
+`gpt-5-2`, pas de Claude). Même famille que le version-skew d'OpenRAG (bug #4/#5) : un artefact
+de config qui suppose un environnement différent de celui réellement déployé — sauf qu'ici c'est
+un nom de endpoint plutôt qu'une version de package.
+
+**Fix** : remplacé par `databricks-meta-llama-3-3-70b-instruct` (Llama 3.3 70B Instruct) — présent
+et `READY`, choix solide pour du tool-calling agentique.
+
+**Point annexe rencontré en cours de route** : deux faux départs de `uv run start-app` (échec
+"port already in use") parce que tuer les PID parents (`uv run`, wrapper zsh) ne tue pas les
+processus enfants réellement liés aux ports (uvicorn :8000, vite :3100) — il faut `lsof -ti :PORT
+| xargs kill -9` sur les vrais processus, pas sur le PID du wrapper.
+
+**Vérifié bout en bout** : `get_current_time` (l'outil d'exemple du template) appelé et exécuté
+avec succès dans l'UI, réponse correcte affichée.
+
 ## Prochaines étapes
 
 1. [x] ~~Attendre confirmation accès workspace~~ — fait, vérifié en CLI
