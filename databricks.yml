@@ -41,6 +41,22 @@ resources:
             name: 'Support Ticket Management'
             space_id: '01f1a032e846136bb82ee33eb3e6a582'
             permission: 'CAN_RUN'
+        # CAN_RUN on the genie_space above lets the service principal *ask* the space, but Genie
+        # then executes the generated SQL with the caller's own UC rights on the underlying table
+        # — a separate grant chain, not implied by the genie_space permission. Found the hard way
+        # in prod (see NOTES.md): local testing didn't catch it because it ran as an already-
+        # privileged user account, not the app's service principal.
+        #
+        # This declares the TABLE-level SELECT (the bundle's uc_securable resource only supports
+        # securable_type CONNECTION/FUNCTION/TABLE/VOLUME — confirmed via `bundle validate`, which
+        # rejects CATALOG/SCHEMA). The USE CATALOG / USE SCHEMA grants Genie also needs have no
+        # declarative equivalent here — they're applied via plain SQL in
+        # scripts/twin/setup_resources.py instead, run once against the workspace.
+        - name: 'support_tickets_table'
+          uc_securable:
+            securable_full_name: 'workspace.databricks_twin.support_tickets'
+            securable_type: 'TABLE'
+            permission: 'SELECT'
 
 targets:
   dev:

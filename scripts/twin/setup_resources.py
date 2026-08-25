@@ -149,12 +149,28 @@ There is no `databricks genie create-space` CLI command. In the workspace UI:
   1. Sidebar > Genie > New
   2. Add table: {CATALOG_SCHEMA}.support_tickets
   3. Configure > Settings > Default warehouse: your serverless SQL warehouse
-  4. (Before deploying the app) Share > add the app's service principal > CAN RUN
-     Find it with: databricks apps get <app-name> --profile {PROFILE} | jq -r '.service_principal_name'
-  5. Copy the space_id from the room URL (.../genie/rooms/<space_id>) into:
+  4. Copy the space_id from the room URL (.../genie/rooms/<space_id>) into:
        - .env: GENIE_SPACE_ID=<space_id>   (local dev)
        - databricks.yml: the support_tickets_genie resource's space_id (deploy)
+
+After `databricks bundle deploy` creates the app, run grant_genie_table_access() below
+(or the two GRANT statements it prints) — CAN_RUN on the genie_space resource in
+databricks.yml is not enough on its own: Genie executes its generated SQL with the
+*caller's* UC rights on the underlying table, which is a separate grant chain (found
+the hard way in prod — see NOTES.md). The table-level SELECT grant IS declared in
+databricks.yml (uc_securable), but USE CATALOG / USE SCHEMA have no bundle-resource
+equivalent (bundle validate rejects CATALOG/SCHEMA securable_type) and must be granted
+via plain SQL, once, after the app's service principal exists.
 """)
+
+
+def grant_genie_table_access(service_principal_id: str):
+    """Run once after `databricks bundle deploy` has created the app (so its service
+    principal exists). Only USE CATALOG / USE SCHEMA — the table-level SELECT is already
+    declared in databricks.yml and applied automatically on deploy."""
+    run_sql(f"GRANT USE CATALOG ON CATALOG workspace TO `{service_principal_id}`")
+    run_sql(f"GRANT USE SCHEMA ON SCHEMA {CATALOG_SCHEMA} TO `{service_principal_id}`")
+    print(f"Granted USE CATALOG / USE SCHEMA on {CATALOG_SCHEMA} to {service_principal_id}")
 
 
 if __name__ == "__main__":

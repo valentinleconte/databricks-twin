@@ -360,3 +360,49 @@ le juge inspecte), soit autre chose. Pas creusé au niveau du détail des évalu
 silencieusement.
 
 Run MLflow consultable : https://dbc-1c1fb98c-23cd.cloud.databricks.com/ml/experiments/168280437378767/evaluation-runs?selectedRunUuid=a3977d8584854eada7c7debcb813206c
+
+## Déploiement réel — `databricks bundle deploy` + `bundle run`
+
+**Oubli corrigé avant de déployer** : 4 commits locaux (tout le câblage des outils + l'éval) n'avaient
+jamais été poussés sur GitHub — je committais après chaque étape mais oubliais `git push`. Repéré
+par l'utilisateur ("pq ya tjrs rien sur github ?"), corrigé immédiatement (`git push origin main`).
+Rien de perdu, juste une négligence de process à surveiller la prochaine fois.
+
+**Déploiement** : `databricks bundle deploy` (crée l'app, uploade 44 fichiers) puis
+`databricks bundle run agent_langgraph` (démarre le compute, clone `e2e-chatbot-app-next`, installe,
+build, démarre). App live : https://agent-databricks-twin-7474648390614555.aws.databricksapps.com
+(`compute_status: ACTIVE`, `app_status: RUNNING`).
+
+**Permission Genie déjà réglée par le bundle** : contrairement à ce qui était prévu (partage manuel
+via l'UI, voir plus haut), la déclaration `genie_space` + `permission: CAN_RUN` dans `databricks.yml`
+a suffi — `bundle deploy` l'a appliquée automatiquement au service principal de l'app
+(`app-vi1pm8 agent-databricks-twin`). Vérifié via l'API permissions (`/api/2.0/permissions/genie/...`).
+
+### Bug trouvé en prod — `CAN_RUN` sur le Genie space ne suffit pas, il faut aussi `SELECT` sur la table
+
+- **Symptôme** : premier test de bout en bout sur l'app déployée (`POST .../invocations`,
+  Bearer token OAuth CLI) → la question ticket échoue avec : *"the query was unable to retrieve the
+  status and assignee of ticket 101 due to a permission error... no access to the
+  'workspace.databricks_twin.support_tickets' table"*.
+- **Cause racine** : `CAN_RUN` sur le Genie space autorise le service principal à *interroger* le
+  space, mais Genie exécute ensuite le SQL généré **avec les propres droits UC du principal
+  appelant** sur la table sous-jacente — un grant séparé, pas inclus dans le grant `genie_space` du
+  bundle. En local ça fonctionnait parce que je requêtais avec mon propre compte utilisateur (déjà
+  propriétaire de la table) ; en prod, le service principal de l'app n'a par défaut aucun droit UC.
+- **Fix** : `GRANT USE CATALOG ON CATALOG workspace`, `GRANT USE SCHEMA ON SCHEMA
+  workspace.databricks_twin`, et `GRANT SELECT ON TABLE workspace.databricks_twin.support_tickets`
+  au service principal (`13a4dfdf-4b26-4005-99a2-e56464502264`, identifié par client_id). Retesté
+  immédiatement après → ticket 101 correctement retourné ("Open" / "Alice Martin").
+- **Leçon** : le grant déclaratif dans `databricks.yml` (`resources: - genie_space: ...`) ne couvre
+  que l'accès au *space* lui-même, pas la chaîne de droits UC dont Genie a besoin en aval pour
+  exécuter le SQL qu'il génère. À vérifier explicitement en prod, pas supposé équivalent au
+  comportement observé en local avec un compte utilisateur déjà privilégié.
+
+**Vérifié en production, les deux outils** (Bearer token OAuth CLI, `stream: true` requis — voir
+`.claude/skills/deploy/SKILL.md`, un premier essai sans `stream` avait renvoyé un 502, probablement
+un démarrage à froid plutôt qu'un vrai problème de format) :
+- Ticket : "What is the status of ticket 101, and who is it assigned to?" → "Open" / "Alice Martin" ✓
+- Doc : "What is a data lakehouse?" → réponse correcte + citation `https://docs.databricks.com/aws/en/lakehouse` ✓
+  (retestée après un premier échec — le bug de fiabilité tool-calling de Llama 3.3 70B documenté
+  plus haut se reproduit aussi en prod, cohérent avec l'hypothèse que c'est un problème du modèle,
+  pas de l'environnement local)
