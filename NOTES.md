@@ -106,6 +106,12 @@ travail ont été déplacées ici, dans `NOTES.md`.
 
 Source exacte : https://github.com/databricks/app-templates/tree/main/agent-langgraph
 
+**Erreur évitée de justesse** : en créant le squelette de notre propre `README.md` (public,
+esprit openrag-twin), j'ai écrasé sans le lire d'abord le `README.md` original du template
+(314 lignes — setup, doc des fonctionnalités). Récupéré depuis `git show HEAD:README.md`
+avant que ce soit commité, sauvegardé dans `docs/AGENT_TEMPLATE_README.md`. Rien perdu, mais
+ça aurait dû être lu/renommé *avant* d'écrire dessus, pas après coup — leçon pour la suite.
+
 ## Prochaines étapes
 
 1. [x] ~~Attendre confirmation accès workspace~~ — fait, vérifié en CLI
