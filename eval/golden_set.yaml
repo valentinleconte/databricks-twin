@@ -1,0 +1,104 @@
+# Golden set for databricks-twin's routing agent.
+#
+# Same shape as openrag-twin's golden set — categories, scoring philosophy, and file
+# structure are deliberately identical (see openrag-twin/eval/golden_set.yaml) so the
+# two projects can be compared side by side. What differs is the ground truth itself:
+# hand-verified against this repo's actual corpus (databricks-docs-md/, loaded into
+# workspace.databricks_twin.doc_chunks) and the actual support_tickets table
+# (scripts/twin/create_tickets.sql) — nothing here is guessed.
+#
+# category:
+#   knowledge      -> must cite a source_url containing one of
+#                      expected_source_substrings, and contain at least one of
+#                      expected_keywords
+#   ticket_known   -> must contain all expected_keywords, must NOT cite a
+#                      docs.databricks.com source
+#   ticket_unknown -> must contain at least one "not found"-style keyword
+#   mixed          -> must satisfy both a knowledge check and a ticket check
+#   off_topic      -> must NOT look like it forced either tool
+#   out_of_corpus  -> must contain an honest "no relevant sources" style
+#                      admission, not a fabricated answer
+
+cases:
+  - id: know-01
+    category: knowledge
+    question: "What is a data lakehouse?"
+    expected_source_substrings: ["/lakehouse"]
+    expected_keywords: ["data lake", "data warehouse"]
+
+  - id: know-02
+    category: knowledge
+    question: "What are the three primary Unity Catalog table types?"
+    expected_source_substrings: ["/tables/delta-table"]
+    expected_keywords: ["managed", "external", "foreign"]
+
+  - id: know-03
+    category: knowledge
+    question: "What happens to the underlying data files when you drop a managed Unity Catalog table?"
+    expected_source_substrings: ["/tables/delta-table"]
+    expected_keywords: ["deleted"]
+
+  - id: know-04
+    category: knowledge
+    question: "How does Databricks Vector Search keep an index in sync with its source Delta table?"
+    expected_source_substrings: ["/vector-search/vector-search"]
+    expected_keywords: ["Delta Sync", "embeddings"]
+
+  - id: know-05
+    category: knowledge
+    question: "What is Lakebase, and what kind of database is it built on?"
+    expected_source_substrings: ["/oltp/projects"]
+    expected_keywords: ["Postgres"]
+
+  - id: know-06
+    category: knowledge
+    question: "What is the URL pattern for a Genie Agent MCP server scoped to one Genie space?"
+    expected_source_substrings: ["/mcp/managed-mcp"]
+    expected_keywords: ["genie"]
+
+  - id: know-07
+    category: knowledge
+    question: "Under the hood, what are Unity Catalog tools really built from?"
+    expected_source_substrings: ["/agent-framework/create-custom-tool"]
+    expected_keywords: ["user-defined function", "UDF"]
+
+  - id: know-08
+    category: knowledge
+    question: "What does Unity AI Gateway do for an agent's tools and MCP servers?"
+    expected_source_substrings: ["/agent-framework/agent-tool"]
+    expected_keywords: ["govern"]
+
+  - id: ticket-01
+    category: ticket_known
+    question: "What's the status of ticket 101, and who is it assigned to?"
+    expected_keywords: ["Open", "Alice Martin"]
+
+  - id: ticket-02
+    category: ticket_known
+    question: "What's the status of ticket 103, and who is it assigned to?"
+    expected_keywords: ["Resolved", "Carla Diaz"]
+
+  - id: ticket-03
+    category: ticket_known
+    question: "How many support tickets are currently Open?"
+    expected_keywords: ["3"]
+
+  - id: ticket-04
+    category: ticket_unknown
+    question: "What is the status of ticket 999?"
+    expected_keywords: ["not found", "no record", "doesn't exist", "does not exist", "no ticket", "couldn't find", "could not find"]
+
+  - id: mixed-01
+    category: mixed
+    question: "What's the status of ticket 104 and who is it assigned to, and separately, what is a data lakehouse?"
+    expected_keywords: ["Open", "Alice Martin"]
+    expected_source_substrings: ["/lakehouse"]
+
+  - id: edge-01
+    category: off_topic
+    question: "Hi, how are you?"
+
+  - id: edge-02
+    category: out_of_corpus
+    question: "How do I configure autoscaling for a Databricks all-purpose compute cluster?"
+    expected_keywords: ["no relevant", "couldn't find", "could not find", "don't have", "do not have", "not covered", "not found", "don't address", "doesn't address", "don't directly address", "doesn't directly address", "don't provide", "do not provide", "doesn't provide", "does not provide"]

@@ -1,0 +1,461 @@
+{
+  "runs": [
+    [
+      {
+        "id": "know-01",
+        "category": "knowledge",
+        "question": "What is a data lakehouse?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/lakehouse']",
+        "response": "A data lakehouse is a data management system that combines the benefits of data lakes and data warehouses, providing scalable storage and processing capabilities for modern organizations. It allows for open, direct access to data stored in standard data formats, indexing protocols optimized for machine learning and data science, and low query latency and high reliability for BI and advanced analytics. The Databricks lakehouse uses Apache Spark and two additional key technologies: Unity Catalog and Delta Lake, to enable real-time data processing, data integration, schema evolution, data transformations, and data analysis and reporting. \n\nSource URL: https://docs.databricks.com/aws/en/lakehouse",
+        "elapsed_s": 20.7
+      },
+      {
+        "id": "know-02",
+        "category": "knowledge",
+        "question": "What are the three primary Unity Catalog table types?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/tables/delta-table']",
+        "response": "The three primary Unity Catalog table types are: \n\n1. Managed tables: Unity Catalog manages the data lifecycle, storage location, and optimizations. \n2. External tables: Reference data stored in cloud object storage that you manage, with Unity Catalog governing data access but not managing data lifecycle, optimizations, or storage layout.\n3. Foreign tables: Connects external catalogs to query data directly in file storage, with the external system managing the data lifecycle and storage location.\n\nSource_url: https://docs.databricks.com/aws/en/tables/delta-table",
+        "elapsed_s": 20.8
+      },
+      {
+        "id": "know-03",
+        "category": "knowledge",
+        "question": "What happens to the underlying data files when you drop a managed Unity Catalog table?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/tables/delta-table']",
+        "response": "When you drop a managed Unity Catalog table, both the metadata and underlying data files are deleted. This is because Unity Catalog manages the data lifecycle, storage location, and optimizations for managed tables. \n\nSource URL: https://docs.databricks.com/aws/en/tables/delta-table \n\nNote that this behavior is specific to managed tables. If you drop an external table, only the catalog metadata is removed, and the underlying data files remain.",
+        "elapsed_s": 20.1
+      },
+      {
+        "id": "know-04",
+        "category": "knowledge",
+        "question": "How does Databricks Vector Search keep an index in sync with its source Delta table?",
+        "passed": false,
+        "errored": false,
+        "reason": "no 'Source URL:' citation found",
+        "response": "<function=workspace__databricks_twin__doc_chunks_index>{\"query\": \"Databricks Vector Search index sync Delta table)}</function>",
+        "elapsed_s": 13.0
+      },
+      {
+        "id": "know-05",
+        "category": "knowledge",
+        "question": "What is Lakebase, and what kind of database is it built on?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/oltp/projects/', 'https://docs.databricks.com/aws/en/oltp/projects/', 'https://docs.databricks.com/aws/en/oltp/projects/', 'https://docs.databricks.com/aws/en/lakehouse']",
+        "response": "Lakebase is a fully managed Postgres database integrated into the Databricks platform. It is built on Postgres and allows for real-time transactional applications alongside lakehouse data, with automatic scaling, instant branching, and native Unity Catalog integration. \n\nSource_url: https://docs.databricks.com/aws/en/oltp/projects/ \n\nIt provides features such as building low-latency apps, serving lakehouse data, storing Postgres changes as Delta tables, and using Lakebase as an online feature store for ML models or as a state store for agents. \n\nSource_url: https://docs.databricks.com/aws/en/oltp/projects/ \n\nTo get started with Lakebase, you can create a project, branch, and database, and connect with `psql` or any Postgres driver. You can also sync Unity Catalog tables into Postgres for low-latency app reads and store Postgres changes as Delta with full change history. \n\nSource_url: https://docs.databricks.com/aws/en/oltp/projects/ \n\nLakebase is part of the Databricks lakehouse, which combines the benefits of data lakes and data warehouses, providing open, direct access to data stored in standard data formats, indexing protocols optimized for machine learning and data science, and low query latency and high reliability for BI and advanced analytics. \n\nSource_url: https://docs.databricks.com/aws/en/lakehouse",
+        "elapsed_s": 22.6
+      },
+      {
+        "id": "know-06",
+        "category": "knowledge",
+        "question": "What is the URL pattern for a Genie Agent MCP server scoped to one Genie space?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/agents/agent-framework/structured-retrieval-tools', 'https://docs.databricks.com/aws/en/generative-ai/mcp/managed-mcp']",
+        "response": "The URL pattern for a Genie Agent MCP server scoped to one Genie space is `https://<workspace-hostname>/api/2.0/mcp/genie/{genie_space_id}`, where `<workspace-hostname>` is the hostname of your Databricks workspace and `<genie_space_id>` is the ID of your Genie Agent. (Source URL: https://docs.databricks.com/aws/en/agents/agent-framework/structured-retrieval-tools, https://docs.databricks.com/aws/en/generative-ai/mcp/managed-mcp)",
+        "elapsed_s": 20.4
+      },
+      {
+        "id": "know-07",
+        "category": "knowledge",
+        "question": "Under the hood, what are Unity Catalog tools really built from?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/generative-ai/agent-framework/create-custom-tool']",
+        "response": "Unity Catalog tools are really just Unity Catalog user-defined functions (UDFs) under the hood. When you define a Unity Catalog tool, you're registering a function in Unity Catalog. \n\nSource_url: https://docs.databricks.com/aws/en/generative-ai/agent-framework/create-custom-tool",
+        "elapsed_s": 19.4
+      },
+      {
+        "id": "know-08",
+        "category": "knowledge",
+        "question": "What does Unity AI Gateway do for an agent's tools and MCP servers?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/generative-ai/mcp/managed-mcp', 'https://docs.databricks.com/aws/en/generative-ai/agent-framework/agent-tool']",
+        "response": "Unity AI Gateway governs and manages the tools and MCP servers that an agent uses, providing a single control plane to control access and monitor activity. It ensures that agents and users only access the tools and data that they are granted permission to access, through Unity Catalog's enforcement of permissions and management of credentials. The Unity AI Gateway also allows users to view, monitor, and manage every server from a centralized location. \n\nAdditionally, Unity AI Gateway provides ready-to-use managed MCP servers that give agents governed access to various Databricks services such as Genie, AI Search, Databricks SQL, and Unity Catalog functions, without requiring any server setup or hosting. It also supports connecting agents to external MCPs and tools, as well as hosting custom MCP servers as Databricks apps to expose custom tools. \n\nOverall, Unity AI Gateway plays a crucial role in managing and governing the tools and MCP servers used by agents, ensuring secure and controlled access to data and resources. \n\nSource_url: https://docs.databricks.com/aws/en/generative-ai/mcp/managed-mcp \nSource_url: https://docs.databricks.com/aws/en/generative-ai/agent-framework/agent-tool",
+        "elapsed_s": 21.9
+      },
+      {
+        "id": "ticket-01",
+        "category": "ticket_known",
+        "question": "What's the status of ticket 101, and who is it assigned to?",
+        "passed": true,
+        "errored": false,
+        "reason": "ticket data present, no doc citation",
+        "response": "The status of ticket 101 is \"Open\" and it is assigned to Alice Martin.",
+        "elapsed_s": 30.2
+      },
+      {
+        "id": "ticket-02",
+        "category": "ticket_known",
+        "question": "What's the status of ticket 103, and who is it assigned to?",
+        "passed": true,
+        "errored": false,
+        "reason": "ticket data present, no doc citation",
+        "response": "The status of ticket 103 is \"Resolved\" and it is assigned to Carla Diaz.",
+        "elapsed_s": 29.3
+      },
+      {
+        "id": "ticket-03",
+        "category": "ticket_known",
+        "question": "How many support tickets are currently Open?",
+        "passed": true,
+        "errored": false,
+        "reason": "ticket data present, no doc citation",
+        "response": "There are 3 support tickets that are currently Open.",
+        "elapsed_s": 33.5
+      },
+      {
+        "id": "ticket-04",
+        "category": "ticket_unknown",
+        "question": "What is the status of ticket 999?",
+        "passed": true,
+        "errored": false,
+        "reason": "correctly reported unknown ticket",
+        "response": "The status of ticket 999 is \"Not Found\", indicating that there is no record for ticket 999 in the support tickets data.",
+        "elapsed_s": 41.4
+      },
+      {
+        "id": "mixed-01",
+        "category": "mixed",
+        "question": "What's the status of ticket 104 and who is it assigned to, and separately, what is a data lakehouse?",
+        "passed": false,
+        "errored": false,
+        "reason": "missing ticket keywords ['Open', 'Alice Martin']",
+        "response": "<function=workspace__databricks_twin__doc_chunks_index>{\"query\": \"data lakehouse definition)}</function>",
+        "elapsed_s": 32.0
+      },
+      {
+        "id": "edge-01",
+        "category": "off_topic",
+        "question": "Hi, how are you?",
+        "passed": true,
+        "errored": false,
+        "reason": "answered without forcing a tool",
+        "response": "I'm doing well, thanks for asking. I'm here to help with any questions or concerns you may have about the Databricks-native RAG platform. How can I assist you today?",
+        "elapsed_s": 13.4
+      },
+      {
+        "id": "edge-02",
+        "category": "out_of_corpus",
+        "question": "How do I configure autoscaling for a Databricks all-purpose compute cluster?",
+        "passed": true,
+        "errored": false,
+        "reason": "honestly reported no relevant sources",
+        "response": "Unfortunately, the search results don't provide a clear answer to the question of how to configure autoscaling for a Databricks all-purpose compute cluster. Let me try searching again for more relevant information.\n\n<function=workspace__databricks_twin__doc_chunks_index>{\"query\": \"Databricks all-purpose compute cluster autoscaling configuration\"}</function>",
+        "elapsed_s": 20.9
+      }
+    ],
+    [
+      {
+        "id": "know-01",
+        "category": "knowledge",
+        "question": "What is a data lakehouse?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/lakehouse']",
+        "response": "A data lakehouse is a data management system that combines the benefits of data lakes and data warehouses. It provides scalable storage and processing capabilities for modern organizations, allowing them to avoid isolated systems for processing different workloads like machine learning and business intelligence. A data lakehouse can help establish a single source of truth, eliminate redundant costs, and ensure data freshness. It combines an optimized metadata layer with validated data stored in standard formats in cloud object storage, allowing users to work from the same data and in the same platform across different use cases. The Databricks lakehouse uses Apache Spark and Delta Lake to bring speed, scalability, and reliability to data processing, and it supports real-time data processing, data integration, schema evolution, data transformations, and data analysis and reporting. \n\nSource URL: https://docs.databricks.com/aws/en/lakehouse",
+        "elapsed_s": 22.4
+      },
+      {
+        "id": "know-02",
+        "category": "knowledge",
+        "question": "What are the three primary Unity Catalog table types?",
+        "passed": false,
+        "errored": false,
+        "reason": "no 'Source URL:' citation found",
+        "response": "<function=workspace__databricks_twin__doc_chunks_index>{\"query\": \"Unity Catalog table types)}</function>",
+        "elapsed_s": 13.6
+      },
+      {
+        "id": "know-03",
+        "category": "knowledge",
+        "question": "What happens to the underlying data files when you drop a managed Unity Catalog table?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/tables/delta-table']",
+        "response": "When you drop a managed Unity Catalog table, both the metadata and underlying data files are deleted. This is according to the Databricks documentation found at https://docs.databricks.com/aws/en/tables/delta-table.",
+        "elapsed_s": 19.7
+      },
+      {
+        "id": "know-04",
+        "category": "knowledge",
+        "question": "How does Databricks Vector Search keep an index in sync with its source Delta table?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/vector-search/vector-search']",
+        "response": "Databricks Vector Search keeps an index in sync with its source Delta table through two options: \n\n1. Delta Sync Index with embeddings computed by Databricks: This option calculates the embeddings using a specified model and optionally saves them to a table in Unity Catalog. The index stays synced with the Delta table as it is updated.\n\n2. Delta Sync Index with self-managed embeddings: This option uses pre-calculated embeddings from a source Delta table. The index stays synced with the Delta table as it is updated.\n\nSource URL: https://docs.databricks.com/aws/en/vector-search/vector-search",
+        "elapsed_s": 20.7
+      },
+      {
+        "id": "know-05",
+        "category": "knowledge",
+        "question": "What is Lakebase, and what kind of database is it built on?",
+        "passed": false,
+        "errored": false,
+        "reason": "no 'Source URL:' citation found",
+        "response": "<function=workspace__databricks_twin__doc_chunks_index>{\"query\": \"Lakebase database type)}</function>",
+        "elapsed_s": 12.9
+      },
+      {
+        "id": "know-06",
+        "category": "knowledge",
+        "question": "What is the URL pattern for a Genie Agent MCP server scoped to one Genie space?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/agents/agent-framework/structured-retrieval-tools', 'https://docs.databricks.com/aws/en/generative-ai/mcp/managed-mcp']",
+        "response": "The URL pattern for a Genie Agent MCP server scoped to one Genie space is `https://<workspace-hostname>/api/2.0/mcp/genie/{genie_space_id}`, where `<genie_space_id>` is the ID of your Genie Agent. Source URL: https://docs.databricks.com/aws/en/agents/agent-framework/structured-retrieval-tools, https://docs.databricks.com/aws/en/generative-ai/mcp/managed-mcp.",
+        "elapsed_s": 20.8
+      },
+      {
+        "id": "know-07",
+        "category": "knowledge",
+        "question": "Under the hood, what are Unity Catalog tools really built from?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/generative-ai/agent-framework/create-custom-tool', 'https://docs.databricks.com/aws/en/udf/unity-catalog', 'https://docs.databricks.com/aws/en/generative-ai/agent-framework/create-custom-tool']",
+        "response": "Unity Catalog tools are really just Unity Catalog user-defined functions (UDFs) under the hood. When you define a Unity Catalog tool, you're registering a function in Unity Catalog. \n\nSource URL: https://docs.databricks.com/aws/en/generative-ai/agent-framework/create-custom-tool \n\nYou can create Unity Catalog functions using one of two APIs. For more information, see SQL and Python user-defined functions (UDFs) in Unity Catalog. \n\nSource URL: https://docs.databricks.com/aws/en/udf/unity-catalog \n\nIt's also important to note that executing arbitrary code in an agent tool can expose sensitive or private information that the agent has access to. Customers are responsible for running only trusted code and configuring guardrails and appropriate permissions to prevent unintended access to data. \n\nSource URL: https://docs.databricks.com/aws/en/generative-ai/agent-framework/create-custom-tool",
+        "elapsed_s": 21.6
+      },
+      {
+        "id": "know-08",
+        "category": "knowledge",
+        "question": "What does Unity AI Gateway do for an agent's tools and MCP servers?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/generative-ai/mcp/managed-mcp', 'https://docs.databricks.com/aws/en/generative-ai/agent-framework/agent-tool']",
+        "response": "Unity AI Gateway connects AI agents to tools, resources, and data in a governed and managed way. It controls access and monitors activity from a single control plane, while Unity Catalog enforces permissions and manages credentials so agents and users can only reach the tools and data they are granted access to. The Unity AI Gateway provides a centralized location to view, monitor, and manage MCP servers, which are used to connect agents to various tools and services, such as Genie, AI Search, Databricks SQL, and Unity Catalog functions. \n\nSource_url: https://docs.databricks.com/aws/en/generative-ai/mcp/managed-mcp \nSource_url: https://docs.databricks.com/aws/en/generative-ai/agent-framework/agent-tool",
+        "elapsed_s": 20.7
+      },
+      {
+        "id": "ticket-01",
+        "category": "ticket_known",
+        "question": "What's the status of ticket 101, and who is it assigned to?",
+        "passed": true,
+        "errored": false,
+        "reason": "ticket data present, no doc citation",
+        "response": "The status of ticket 101 is \"Open\" and it is assigned to Alice Martin.",
+        "elapsed_s": 28.1
+      },
+      {
+        "id": "ticket-02",
+        "category": "ticket_known",
+        "question": "What's the status of ticket 103, and who is it assigned to?",
+        "passed": true,
+        "errored": false,
+        "reason": "ticket data present, no doc citation",
+        "response": "The status of ticket 103 is \"Resolved\" and it is assigned to Carla Diaz.",
+        "elapsed_s": 28.7
+      },
+      {
+        "id": "ticket-03",
+        "category": "ticket_known",
+        "question": "How many support tickets are currently Open?",
+        "passed": true,
+        "errored": false,
+        "reason": "ticket data present, no doc citation",
+        "response": "There are 3 support tickets that are currently Open.",
+        "elapsed_s": 29.9
+      },
+      {
+        "id": "ticket-04",
+        "category": "ticket_unknown",
+        "question": "What is the status of ticket 999?",
+        "passed": true,
+        "errored": false,
+        "reason": "correctly reported unknown ticket",
+        "response": "The status of ticket 999 is \"Ticket not found\" because it does not exist in the system.",
+        "elapsed_s": 38.4
+      },
+      {
+        "id": "mixed-01",
+        "category": "mixed",
+        "question": "What's the status of ticket 104 and who is it assigned to, and separately, what is a data lakehouse?",
+        "passed": false,
+        "errored": false,
+        "reason": "missing ticket keywords ['Open', 'Alice Martin']",
+        "response": "<function=workspace__databricks_twin__doc_chunks_index>{\"query\": \"data lakehouse definition)}</function>",
+        "elapsed_s": 29.4
+      },
+      {
+        "id": "edge-01",
+        "category": "off_topic",
+        "question": "Hi, how are you?",
+        "passed": true,
+        "errored": false,
+        "reason": "answered without forcing a tool",
+        "response": "I'm doing well, thanks for asking. I'm here to help you with any questions or issues you may have related to the Databricks-native RAG platform. How can I assist you today?",
+        "elapsed_s": 13.4
+      },
+      {
+        "id": "edge-02",
+        "category": "out_of_corpus",
+        "question": "How do I configure autoscaling for a Databricks all-purpose compute cluster?",
+        "passed": false,
+        "errored": false,
+        "reason": "did not admit the gap; response: \"Unfortunately, the search results don't directly answer the question of how to configure autoscaling for a Databricks all-purpose compute cluster. However, I can try to provide some general guidance.\\n\"",
+        "response": "Unfortunately, the search results don't directly answer the question of how to configure autoscaling for a Databricks all-purpose compute cluster. However, I can try to provide some general guidance.\n\nTo configure autoscaling for a Databricks all-purpose compute cluster, you typically need to follow these steps:\n\n1. Go to the Databricks workspace and navigate to the \"Clusters\" page.\n2. Click on the cluster you want to configure autoscaling for.\n3. Click on the \"Autoscaling\" tab.\n4. Enable autoscaling by toggling the switch.\n5. Configure the autoscaling settings, such as the minimum and maximum number of nodes, and the scaling policy.\n\nPlease note that the exact steps may vary depending on the Databricks version and configuration. I recommend checking the official Databricks documentation for the most up-to-date and accurate information.\n\nIf you need more specific guidance or have further questions, feel free to ask! \n\nSource URL: https://docs.databricks.com/clusters/configure-clusters.html (not directly provided by the search results, but a relevant resource)",
+        "elapsed_s": 21.6
+      }
+    ],
+    [
+      {
+        "id": "know-01",
+        "category": "knowledge",
+        "question": "What is a data lakehouse?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/lakehouse']",
+        "response": "A data lakehouse is a data management system that combines the benefits of data lakes and data warehouses. It provides scalable storage and processing capabilities for modern organizations, allowing them to avoid isolated systems for processing different workloads, such as machine learning (ML) and business intelligence (BI). A data lakehouse can help establish a single source of truth, eliminate redundant costs, and ensure data freshness. It combines an optimized metadata layer with validated data stored in standard formats in cloud object storage, allowing users to work from the same data and in the same platform across different use cases. The Databricks lakehouse uses Apache Spark, Delta Lake, and Unity Catalog to provide real-time data processing, data integration, schema evolution, data transformations, and data analysis and reporting capabilities. \n\nSource URL: https://docs.databricks.com/aws/en/lakehouse",
+        "elapsed_s": 21.3
+      },
+      {
+        "id": "know-02",
+        "category": "knowledge",
+        "question": "What are the three primary Unity Catalog table types?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/tables/delta-table']",
+        "response": "The three primary Unity Catalog table types are:\n\n1. Managed tables: Unity Catalog manages the data lifecycle, storage location, and optimizations. \n2. External tables: Reference data stored in cloud object storage that you manage. Unity Catalog governs data access but doesn't manage data lifecycle, optimizations, or storage layout.\n3. Foreign tables: Uses secure JDBC connections to external data systems like PostgreSQL and MySQL.\n\nSource_url: https://docs.databricks.com/aws/en/tables/delta-table",
+        "elapsed_s": 19.6
+      },
+      {
+        "id": "know-03",
+        "category": "knowledge",
+        "question": "What happens to the underlying data files when you drop a managed Unity Catalog table?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/tables/delta-table']",
+        "response": "When you drop a managed Unity Catalog table, both the metadata and underlying data files are deleted. This is according to the Databricks documentation on Unity Catalog table types, which can be found at https://docs.databricks.com/aws/en/tables/delta-table.",
+        "elapsed_s": 18.8
+      },
+      {
+        "id": "know-04",
+        "category": "knowledge",
+        "question": "How does Databricks Vector Search keep an index in sync with its source Delta table?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/vector-search/vector-search']",
+        "response": "Databricks Vector Search keeps an index in sync with its source Delta table by providing two options: \n\n1. Delta Sync Index with embeddings computed by Databricks: With this option, you provide a source Delta table that contains data in text format. Databricks calculates the embeddings using a model that you specify, and optionally saves the embeddings to a table in Unity Catalog. As the Delta table is updated, the index stays synced with the Delta table.\n\n2. Delta Sync Index with self-managed embeddings: With this option, you provide a source Delta table that contains pre-calculated embeddings. As the Delta table is updated, the index stays synced with the Delta table.\n\nSource URL: https://docs.databricks.com/aws/en/vector-search/vector-search",
+        "elapsed_s": 20.3
+      },
+      {
+        "id": "know-05",
+        "category": "knowledge",
+        "question": "What is Lakebase, and what kind of database is it built on?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/oltp/projects/']",
+        "response": "Lakebase is a fully managed Postgres database integrated into the Databricks platform. It is built on Postgres and allows for real-time transactional applications alongside lakehouse data, with automatic scaling, instant branching, and native Unity Catalog integration. According to the documentation found at https://docs.databricks.com/aws/en/oltp/projects/, Lakebase enables low-latency apps, serves lakehouse data, stores Postgres changes as Delta tables, and supports AI and ML use cases.",
+        "elapsed_s": 20.2
+      },
+      {
+        "id": "know-06",
+        "category": "knowledge",
+        "question": "What is the URL pattern for a Genie Agent MCP server scoped to one Genie space?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/agents/agent-framework/structured-retrieval-tools', 'https://docs.databricks.com/aws/en/generative-ai/mcp/managed-mcp', 'https://docs.databricks.com/aws/en/agents/agent-framework/structured-retrieval-tools']",
+        "response": "The URL pattern for a Genie Agent MCP server scoped to one Genie space is `https://<workspace-hostname>/api/2.0/mcp/genie/{genie_space_id}`, where `<workspace-hostname>` is the hostname of your Databricks workspace and `{genie_space_id}` is the ID of your Genie Agent. \n\nSource URL: https://docs.databricks.com/aws/en/agents/agent-framework/structured-retrieval-tools \nSource URL: https://docs.databricks.com/aws/en/generative-ai/mcp/managed-mcp \nSource URL: https://docs.databricks.com/aws/en/agents/agent-framework/structured-retrieval-tools",
+        "elapsed_s": 20.9
+      },
+      {
+        "id": "know-07",
+        "category": "knowledge",
+        "question": "Under the hood, what are Unity Catalog tools really built from?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/udf/unity-catalog', 'https://docs.databricks.com/aws/en/generative-ai/agent-framework/create-custom-tool']",
+        "response": "Unity Catalog tools are really just Unity Catalog user-defined functions (UDFs) under the hood. When you define a Unity Catalog tool, you're registering a function in Unity Catalog. To learn more about Unity Catalog UDFs, see [SQL and Python user-defined functions (UDFs) in Unity Catalog](https://docs.databricks.com/aws/en/udf/unity-catalog). \n\nSource URL: https://docs.databricks.com/aws/en/generative-ai/agent-framework/create-custom-tool",
+        "elapsed_s": 20.3
+      },
+      {
+        "id": "know-08",
+        "category": "knowledge",
+        "question": "What does Unity AI Gateway do for an agent's tools and MCP servers?",
+        "passed": true,
+        "errored": false,
+        "reason": "cited ['https://docs.databricks.com/aws/en/generative-ai/mcp/managed-mcp', 'https://docs.databricks.com/aws/en/generative-ai/agent-framework/agent-tool']",
+        "response": "Unity AI Gateway governs and manages the tools and MCP servers that an agent uses, controlling access and monitoring activity from a single control plane. It enforces permissions and manages credentials through Unity Catalog, ensuring that agents and users only access the tools and data that they are granted. The Unity AI Gateway provides a centralized location to view, monitor, and manage all MCP servers, and it supports the use of managed MCP servers, which are ready-to-use servers that connect AI agents to data in Unity Catalog, Databricks AI Search indexes, Genie Agents, and custom functions. \n\nSource_url: https://docs.databricks.com/aws/en/generative-ai/mcp/managed-mcp \nSource_url: https://docs.databricks.com/aws/en/generative-ai/agent-framework/agent-tool",
+        "elapsed_s": 20.1
+      },
+      {
+        "id": "ticket-01",
+        "category": "ticket_known",
+        "question": "What's the status of ticket 101, and who is it assigned to?",
+        "passed": true,
+        "errored": false,
+        "reason": "ticket data present, no doc citation",
+        "response": "The status of ticket 101 is \"Open\" and it is assigned to Alice Martin.",
+        "elapsed_s": 32.2
+      },
+      {
+        "id": "ticket-02",
+        "category": "ticket_known",
+        "question": "What's the status of ticket 103, and who is it assigned to?",
+        "passed": true,
+        "errored": false,
+        "reason": "ticket data present, no doc citation",
+        "response": "The status of ticket 103 is Resolved, and it is assigned to Carla Diaz.",
+        "elapsed_s": 39.1
+      },
+      {
+        "id": "ticket-03",
+        "category": "ticket_known",
+        "question": "How many support tickets are currently Open?",
+        "passed": true,
+        "errored": false,
+        "reason": "ticket data present, no doc citation",
+        "response": "There are 3 support tickets that are currently Open.",
+        "elapsed_s": 28.7
+      },
+      {
+        "id": "ticket-04",
+        "category": "ticket_unknown",
+        "question": "What is the status of ticket 999?",
+        "passed": true,
+        "errored": false,
+        "reason": "correctly reported unknown ticket",
+        "response": "The status of ticket 999 is \"Ticket 999 not found or status is null\", indicating that ticket 999 does not exist in the data or its status is not available.",
+        "elapsed_s": 38.5
+      },
+      {
+        "id": "mixed-01",
+        "category": "mixed",
+        "question": "What's the status of ticket 104 and who is it assigned to, and separately, what is a data lakehouse?",
+        "passed": false,
+        "errored": false,
+        "reason": "missing ticket keywords ['Open', 'Alice Martin']",
+        "response": "<function=workspace__databricks_twin__doc_chunks_index>{\"query\": \"data lakehouse definition)}</function>",
+        "elapsed_s": 27.1
+      },
+      {
+        "id": "edge-01",
+        "category": "off_topic",
+        "question": "Hi, how are you?",
+        "passed": true,
+        "errored": false,
+        "reason": "answered without forcing a tool",
+        "response": "I'm doing well, thanks for asking. Is there something I can help you with, or would you like to chat about the Databricks-native RAG platform?",
+        "elapsed_s": 17.2
+      },
+      {
+        "id": "edge-02",
+        "category": "out_of_corpus",
+        "question": "How do I configure autoscaling for a Databricks all-purpose compute cluster?",
+        "passed": false,
+        "errored": false,
+        "reason": "did not admit the gap; response: \"Unfortunately, the search results didn't provide a clear answer to your question about configuring autoscaling for a Databricks all-purpose compute cluster. Let me try searching again for more relevan\"",
+        "response": "Unfortunately, the search results didn't provide a clear answer to your question about configuring autoscaling for a Databricks all-purpose compute cluster. Let me try searching again for more relevant information.\n\n<function=workspace__databricks_twin__doc_chunks_index>{\"query\": \"Databricks all-purpose compute cluster autoscaling configuration\"}</function>",
+        "elapsed_s": 19.5
+      }
+    ]
+  ],
+  "run_count": 3
+}
