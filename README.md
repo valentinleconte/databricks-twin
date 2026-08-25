@@ -8,6 +8,8 @@
 
 ---
 
+*Elevator pitch, written to be said out loud: [`communication/pitch.md`](communication/pitch.md).*
+
 ## Why this exists
 
 I'm preparing for a **Databricks-related interview**. Rather than just reading the docs, I built a
