@@ -22,6 +22,8 @@ resources:
             value: "300"
           - name: MLFLOW_EXPERIMENT_ID
             value_from: "experiment"
+          - name: GENIE_SPACE_ID
+            value: "01f1a032e846136bb82ee33eb3e6a582"
 
       # Resources which this app has access to
       resources:
@@ -29,6 +31,16 @@ resources:
           experiment:
             experiment_id: "168280437378767"
             permission: 'CAN_MANAGE'
+        - name: 'doc_search_index'
+          uc_securable:
+            securable_full_name: 'workspace.databricks_twin.doc_chunks_index'
+            securable_type: 'TABLE'
+            permission: 'SELECT'
+        - name: 'support_tickets_genie'
+          genie_space:
+            name: 'Support Ticket Management'
+            space_id: '01f1a032e846136bb82ee33eb3e6a582'
+            permission: 'CAN_RUN'
 
 targets:
   dev:
@@ -44,4 +56,4 @@ targets:
     resources:
       apps:
         agent_langgraph:
-          name: agent-langgraph
+          name: agent-databricks-twin

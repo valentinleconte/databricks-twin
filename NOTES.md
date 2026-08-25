@@ -139,9 +139,59 @@ avec succès dans l'UI, réponse correcte affichée.
 
 1. [x] ~~Attendre confirmation accès workspace~~ — fait, vérifié en CLI
 2. [x] ~~Vérifier Vector Search / Model Serving~~ — les deux confirmés fonctionnels
-3. [ ] Cloner `agent-langgraph` comme base réelle du projet (remplacer ce clone de review)
-4. [ ] Choisir le LLM (pas de Claude en pay-per-token natif — voir si accessible autrement, ou
-   choisir parmi le roster Llama/Qwen/GPT-OSS disponible)
-5. [ ] Définir le scénario fonctionnel (routage) — à faire choisir par l'utilisateur, pas moi,
-   même principe que pour OpenRAG
+3. [x] ~~Cloner `agent-langgraph` comme base réelle du projet~~ — fait
+4. [x] ~~Choisir le LLM~~ — `databricks-meta-llama-3-3-70b-instruct` (voir bug ci-dessus)
+5. [x] ~~Définir le scénario fonctionnel (routage)~~ — même scénario qu'OpenRAG (RAG doc vs second
+   outil), mais le second outil est réimplémenté nativement Databricks : **Genie space** (NL-to-SQL)
+   sur une table de tickets, au lieu du mock Python porté tel quel. Décision utilisateur confirmée.
 6. [ ] README avec la licence Databricks correctement citée + NOTICE inclus
+
+## Scénario fonctionnel — construction en cours
+
+**Nom de l'app** : `agent-databricks-twin`. **Mémoire** : stateless (pas de Lakebase) — décision
+utilisateur confirmée, cohérent avec le choix "pas de Postgres à opérer" pour ce projet démo.
+
+**Corpus documentaire** (même trick auto-référentiel qu'OpenRAG — la doc des briques qui font
+tourner le RAG lui-même) : 11 pages doc Databricks (`scripts/twin/fetch_databricks_docs.py`),
+découpées en **196 chunks** (1000 car., overlap 200 — même paramétrage qu'OpenRAG) et chargées dans
+`workspace.databricks_twin.doc_chunks` (Delta, `enableChangeDataFeed=true`, requis pour Vector
+Search). Vérifié par `SELECT COUNT(*)` → 196, correspond au compte du chunker.
+
+**Table structurée** `workspace.databricks_twin.support_tickets` — 8 tickets mock, mêmes IDs
+101/102/103 qu'OpenRAG pour la continuité (même histoire, statut/priority/assignee/summary/updated),
++ 5 tickets supplémentaires (104-108) pour que le Genie space ait de quoi faire du vrai NL-to-SQL
+(compter, filtrer, grouper) plutôt qu'un lookup à un seul enregistrement. Les résumés de tickets
+104-108 sont volontairement écrits comme des clins d'œil aux vrais bugs de ce projet (endpoint
+`databricks-gpt-5-2`, CDF manquant, permission Genie manquante...).
+
+**Vector Search** :
+- Endpoint `databricks-twin-vs` (type STANDARD) créé et `ONLINE`.
+- Index `workspace.databricks_twin.doc_chunks_index` créé (`DELTA_SYNC`, `TRIGGERED`, embeddings
+  managés via `databricks-gte-large-en` sur la colonne `content`). Provisioning initial en cours au
+  moment de la rédaction (peut prendre plusieurs minutes la première fois sur un endpoint neuf) —
+  à vérifier `status.ready == true` avant de tester l'agent en local.
+
+**Genie Space** — **création UI-only, ne peut pas être automatisée en CLI** (confirmé : pas de
+`databricks genie create-space`). Instructions données à l'utilisateur (voir message de session) :
+créer un space sur `workspace.databricks_twin.support_tickets`, warehouse par défaut = "Serverless
+Starter Warehouse" (`1f75e75518a91b9a`), le partager en `CAN_RUN` avec le service principal de
+l'app (`databricks apps get agent-databricks-twin --output json --profile databricks-twin | jq -r
+'.service_principal_name'`), puis me redonner le `space_id` (visible dans l'URL `.../genie/rooms/<id>`
+ou via `databricks genie list-spaces`).
+
+**Agent (`agent_server/agent.py`)** — réécrit pour utiliser les deux MCP servers Databricks-hébergés
+au lieu de l'outil d'exemple `get_current_time` (supprimé) :
+- `doc-search` → `{host}/api/2.0/mcp/vector-search/workspace/databricks_twin/doc_chunks_index`
+- `support-tickets-genie` → `{host}/api/2.0/mcp/genie/{GENIE_SPACE_ID}` (ajouté seulement si
+  `GENIE_SPACE_ID` est défini dans l'environnement — dégradation propre en attendant que
+  l'utilisateur crée le space, pas de crash).
+- Prompt de routage (`AGENT_INSTRUCTIONS`) prépendé aux messages en tant que message `system` —
+  **pas** un paramètre `prompt=`/`instructions=` de `create_agent()` (ce template ne l'accepte pas,
+  documenté dans `.claude/skills/modify-agent/SKILL.md`) : même leçon que l'appel d'API à respecter
+  à la lettre plutôt que supposer une signature.
+
+**`databricks.yml`** — ajouté `doc_search_index` (`uc_securable` sur l'index Vector Search,
+permission `SELECT`) ; entrée `support_tickets_genie` laissée en commentaire, à activer une fois le
+`space_id` connu. **Bug annexe corrigé au passage** : le target `prod` réécrasait le nom de l'app à
+`agent-langgraph` (résidu du template, incohérent avec le nom choisi `agent-databricks-twin`) —
+corrigé. `databricks bundle validate` → OK.
