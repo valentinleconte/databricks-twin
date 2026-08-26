@@ -3,8 +3,8 @@
 # `.github/workflows/deploy.yml` is the template's own workflow — manual-trigger only,
 # needs a service principal + OIDC federation to actually run, and deploys rather than
 # checks. Nothing gated the additions in agent_server/agent.py, agent_server/evaluate_agent.py,
-# scripts/twin/ and eval/ — a lint regression or a syntax error in those would only surface
-# at deploy time, or not at all if nobody happened to run them.
+# scripts/twin/ and eval/ — a lint regression, a syntax error, or a drifted cross-file coupling
+# (see tests_twin/README.md) would only surface at deploy time, or not at all.
 #
 # Everything here runs without Docker, a Databricks workspace, or any secret, so it gates
 # every PR in seconds. Same "cheap, fast, always-on" philosophy as openrag-twin's
@@ -20,6 +20,7 @@ on:
       - "agent_server/evaluate_agent.py"
       - "eval/**"
       - "scripts/twin/**"
+      - "tests_twin/**"
       - "databricks.yml"
       - ".github/workflows/twin-checks.yml"
   pull_request:
@@ -46,7 +47,7 @@ jobs:
       - name: Lint (ruff) — only the code that's mine, not the upstream template
         run: >
           uv run --with ruff ruff check
-          agent_server/agent.py agent_server/evaluate_agent.py eval/run_eval.py scripts/twin
+          agent_server/agent.py agent_server/evaluate_agent.py eval/run_eval.py scripts/twin tests_twin
 
       - name: Syntax-check every script
         run: |
@@ -54,31 +55,5 @@ jobs:
             agent_server/agent.py agent_server/evaluate_agent.py eval/run_eval.py \
             scripts/twin/dbsql.py scripts/twin/fetch_databricks_docs.py scripts/twin/setup_resources.py
 
-      - name: Validate golden_set.yaml — every case has the fields run_eval.py expects
-        run: |
-          uv run --with pyyaml python3 -c "
-          import sys, yaml
-          cases = yaml.safe_load(open('eval/golden_set.yaml'))['cases']
-          categories = {'knowledge', 'ticket_known', 'ticket_unknown', 'mixed', 'off_topic', 'out_of_corpus'}
-          ids = set()
-          errors = []
-          for c in cases:
-              cid = c.get('id')
-              if not cid or cid in ids:
-                  errors.append(f'missing or duplicate id: {cid!r}')
-              ids.add(cid)
-              if c.get('category') not in categories:
-                  errors.append(f'{cid}: unknown category {c.get(\"category\")!r}')
-              if not c.get('question'):
-                  errors.append(f'{cid}: missing question')
-              if c.get('category') in ('knowledge', 'mixed') and not c.get('expected_source_substrings'):
-                  errors.append(f'{cid}: category {c[\"category\"]!r} needs expected_source_substrings')
-              if c.get('category') != 'off_topic' and not c.get('expected_keywords'):
-                  errors.append(f'{cid}: missing expected_keywords')
-          if errors:
-              print('\n'.join(errors)); sys.exit(1)
-          print(f'{len(cases)} cases OK')
-          "
-
-      - name: Validate databricks.yml is well-formed
-        run: uv run --with pyyaml python3 -c "import yaml; yaml.safe_load(open('databricks.yml')); print('databricks.yml OK')"
+      - name: Unit tests (tests_twin/) — eval scoring, chunking/escaping, cross-file invariants
+        run: uv run --with pytest --with pyyaml pytest tests_twin -q
