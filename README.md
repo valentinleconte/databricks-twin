@@ -202,8 +202,10 @@ runs on real Databricks resources, not local containers. What reproducing it act
 | [`scripts/twin/setup_resources.py`](scripts/twin/setup_resources.py), [`dbsql.py`](scripts/twin/dbsql.py), [`create_tickets.sql`](scripts/twin/create_tickets.sql) | One-shot, idempotent setup of every UC/Vector Search resource the agent depends on |
 | [`agent_server/agent.py`](agent_server/agent.py) | Rewritten: the template's sample tool replaced with the two real MCP tools + routing prompt |
 | [`agent_server/evaluate_agent.py`](agent_server/evaluate_agent.py) | Rewritten: golden set as data, 2 targeted scorers instead of the template's 9-scorer placeholder setup |
-| [`eval/`](eval/) | 15-case golden set + scoring harness with multi-run stability reporting |
+| [`eval/`](eval/) | 15-case golden set + scoring harness with multi-run stability reporting — see [`eval/README.md`](eval/README.md) for the full methodology and latest numbers |
 | [`databricks.yml`](databricks.yml) | Resource grants for the Vector Search index, the Genie space, and the ticket table |
+| [`.github/workflows/twin-checks.yml`](.github/workflows/twin-checks.yml) | CI on the code above (lint + syntax + golden-set schema) — zero secrets, zero live workspace needed |
+| [`docs/AGENT_TEMPLATE_README.md`](docs/AGENT_TEMPLATE_README.md) | The template's original README, recovered after I nearly overwrote it (see `NOTES.md`) — kept for reference/comparison, not a fork of it |
 | [`NOTES.md`](NOTES.md) | My own working notes across sessions (French) — full bug write-ups live here |
 | everything else | Upstream [`databricks/app-templates/agent-langgraph`](https://github.com/databricks/app-templates/tree/main/agent-langgraph) |
 

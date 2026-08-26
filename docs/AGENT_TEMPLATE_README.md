@@ -1,3 +1,9 @@
+> **Note:** this is the original, unmodified README from
+> [`databricks/app-templates/agent-langgraph`](https://github.com/databricks/app-templates/tree/main/agent-langgraph),
+> the upstream this project is built on — kept here for reference (see the main
+> [README](../README.md#whats-mine-vs-upstream) for what's actually mine vs. this). Not a fork or a
+> copy of the live project state, just the starting point.
+
 # Responses API Agent
 
 This template defines a conversational agent app. The app comes with a built-in chat UI, but also exposes an API endpoint for invoking the agent so that you can serve your UI elsewhere (e.g. on your website or in a mobile app).
