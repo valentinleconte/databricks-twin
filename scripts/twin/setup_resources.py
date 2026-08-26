@@ -17,10 +17,9 @@ import os
 import re
 import subprocess
 import sys
-import time
 
 sys.path.insert(0, os.path.dirname(__file__))
-from dbsql import run_sql  # noqa: E402
+from dbsql import run_sql
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CORPUS_DIR = os.path.join(REPO_ROOT, "databricks-docs-md")
@@ -80,7 +79,8 @@ def main():
     step("Chunk + load doc_chunks")
     rows = []
     for path in sorted(glob.glob(os.path.join(CORPUS_DIR, "*.md"))):
-        text = open(path, encoding="utf-8").read()
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
         m_title = re.search(r"^title:\s*(.+)$", text, re.MULTILINE)
         m_url = re.search(r"^source_url:\s*(.+)$", text, re.MULTILINE)
         title = m_title.group(1).strip() if m_title else os.path.basename(path)
@@ -105,14 +105,16 @@ def main():
 
     step("Create + load support_tickets table")
     ddl_path = os.path.join(os.path.dirname(__file__), "create_tickets.sql")
-    for stmt in [s.strip() for s in open(ddl_path).read().split(";") if s.strip()]:
+    with open(ddl_path) as f:
+        ddl_statements = f.read()
+    for stmt in [s.strip() for s in ddl_statements.split(";") if s.strip()]:
         run_sql(stmt, wait="30s")
     print(f"{CATALOG_SCHEMA}.support_tickets ready")
 
     step("Create Vector Search endpoint (idempotent-ish: ignore 'already exists')")
     proc = subprocess.run(
         ["databricks", "vector-search-endpoints", "create-endpoint", VS_ENDPOINT, "STANDARD", "--profile", PROFILE],
-        capture_output=True, text=True,
+        capture_output=True, text=True, check=False,
     )
     if proc.returncode != 0 and "already exists" not in proc.stderr.lower():
         print(proc.stderr, file=sys.stderr)
@@ -136,7 +138,7 @@ def main():
     }}"""
     proc = subprocess.run(
         ["databricks", "vector-search-indexes", "create-index", "--json", index_json, "--profile", PROFILE],
-        capture_output=True, text=True,
+        capture_output=True, text=True, check=False,
     )
     if proc.returncode != 0 and "already exists" not in proc.stderr.lower():
         print(proc.stderr, file=sys.stderr)

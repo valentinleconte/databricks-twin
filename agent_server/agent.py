@@ -1,10 +1,14 @@
 import logging
 import os
-from typing import AsyncGenerator, Optional
+from collections.abc import AsyncGenerator
 
 import mlflow
 from databricks.sdk import WorkspaceClient
-from databricks_langchain import ChatDatabricks, DatabricksMCPServer, DatabricksMultiServerMCPClient
+from databricks_langchain import (
+    ChatDatabricks,
+    DatabricksMCPServer,
+    DatabricksMultiServerMCPClient,
+)
 from langchain.agents import create_agent
 from mlflow.genai.agent_server import invoke, stream
 from mlflow.types.responses import (
@@ -17,7 +21,6 @@ from mlflow.types.responses import (
 from agent_server.utils import (
     get_databricks_host_from_env,
     get_session_id,
-    get_user_workspace_client,
     process_agent_astream_events,
 )
 
@@ -81,7 +84,7 @@ def init_mcp_client(workspace_client: WorkspaceClient) -> DatabricksMultiServerM
     return DatabricksMultiServerMCPClient(servers)
 
 
-async def init_agent(workspace_client: Optional[WorkspaceClient] = None):
+async def init_agent(workspace_client: WorkspaceClient | None = None):
     mcp_client = init_mcp_client(workspace_client or sp_workspace_client)
     try:
         tools = await mcp_client.get_tools()

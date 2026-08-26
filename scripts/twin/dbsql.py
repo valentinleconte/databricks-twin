@@ -23,6 +23,7 @@ def run_sql(statement: str, wait: str = "30s", profile: str = PROFILE, warehouse
         ["databricks", "api", "post", "/api/2.0/sql/statements", "--json", json.dumps(body), "--profile", profile],
         capture_output=True,
         text=True,
+        check=False,  # returncode checked explicitly below, with a tailored error message
     )
     if proc.returncode != 0:
         print("CLI ERROR:", proc.stderr, file=sys.stderr)
@@ -37,6 +38,7 @@ def run_sql(statement: str, wait: str = "30s", profile: str = PROFILE, warehouse
             ["databricks", "api", "get", f"/api/2.0/sql/statements/{statement_id}", "--profile", profile],
             capture_output=True,
             text=True,
+            check=False,
         )
         resp = json.loads(proc.stdout)
         state = resp.get("status", {}).get("state")

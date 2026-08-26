@@ -67,7 +67,7 @@ for url in URLS:
 
         results.append((url, filepath, len(content), True, None))
         print(f"OK  {url} -> {filepath} ({len(content)} chars)")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — one bad page (network, parsing, HTTP error) shouldn't abort the batch
         results.append((url, None, 0, False, str(e)))
         print(f"FAIL {url}: {e}")
 
