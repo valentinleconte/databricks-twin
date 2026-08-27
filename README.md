@@ -8,7 +8,17 @@
 
 ---
 
-*Elevator pitch, written to be said out loud: [`communication/pitch.md`](communication/pitch.md).*
+## Pitch video
+
+[![Watch the pitch video](communication/thumbnail.png)](https://valentinleconte.github.io/databricks-twin/pitch.html)
+
+*Click to watch (~3 min)* — what this project is, the architecture, the routing scenario, and one
+real bug found only after deploying to production. Opens and autoplays (muted, click to unmute) on
+a GitHub Pages player — nothing downloads. The raw file is also available in
+[`communication/`](communication/) if you'd rather grab it directly. A shorter, spoken elevator
+pitch (30s / 90s) also lives in [`communication/pitch.md`](communication/pitch.md).
+
+---
 
 ## Why this exists
 
