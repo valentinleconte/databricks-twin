@@ -144,7 +144,10 @@ avec succès dans l'UI, réponse correcte affichée.
 5. [x] ~~Définir le scénario fonctionnel (routage)~~ — même scénario qu'OpenRAG (RAG doc vs second
    outil), mais le second outil est réimplémenté nativement Databricks : **Genie space** (NL-to-SQL)
    sur une table de tickets, au lieu du mock Python porté tel quel. Décision utilisateur confirmée.
-6. [ ] README avec la licence Databricks correctement citée + NOTICE inclus
+6. [x] ~~README avec la licence Databricks correctement citée + NOTICE inclus~~ — fait, README
+   § License, NOTICE conservé intact à la racine
+7. [x] ~~Déploiement réel + audit repo (CI, tests, topics, vidéo pitch)~~ — fait, voir sections
+   "Déploiement réel" et suivantes ci-dessus
 7. [x] ~~Éval (golden set + MLflow natif allégé)~~ — fait, 3 bugs réels trouvés et documentés
    (voir section "Évaluation" ci-dessous)
 
